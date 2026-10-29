@@ -1,0 +1,43 @@
+<launch>
+   <!-- MAVROS -->
+   <arg name="mav_id" default="1" />
+   <arg name="use_pix" default="true" />
+   <arg name="port1" default="20101" />
+   <arg name="port2" default="20100" />
+   <!-- MAV_CMD_SET_MESSAGE_INTERVAL interval for the simulated IMU streams.
+        10000 us corresponds to 100 Hz. -->
+   <arg name="sim_imu_interval_us" default="10000" />
+
+   <group if="$(arg use_pix)">
+      <arg name="fcu_url" default="/dev/ttyUSB0:921600"/>
+      <include file="$(find mavros)/launch/px4.launch">
+         <arg name="fcu_url" value="$(arg fcu_url)"/>
+         <arg name="gcs_url" value=""/>
+         <arg name="tgt_system" value="$(arg mav_id)"/>
+         <arg name="tgt_component" value="1"/>
+      </include>
+
+   </group>
+   <group unless="$(arg use_pix)">
+      <arg name="fcu_url" default="udp://:$(arg port1)@127.0.0.1:$(arg port2)"/>
+      <include file="$(find mavros)/launch/px4.launch">
+         <arg name="fcu_url" value="$(arg fcu_url)"/>
+         <arg name="gcs_url" value=""/>
+         <arg name="tgt_system" value="$(arg mav_id)"/>
+         <arg name="tgt_component" value="1"/>
+      </include>
+
+      <!-- /mavros/imu/data combines HIGHRES_IMU measurements with the latest
+           attitude, so request both PX4 MAVLink streams at the same rate. -->
+      <node pkg="mavros" type="mavcmd" name="set_sim_highres_imu_rate"
+            output="screen"
+            args="--wait -v long 511 105 $(arg sim_imu_interval_us) 0 0 0 0 0" />
+      <node pkg="mavros" type="mavcmd" name="set_sim_attitude_quaternion_rate"
+            output="screen"
+            args="--wait -v long 511 31 $(arg sim_imu_interval_us) 0 0 0 0 0" />
+   </group>
+
+   <node pkg="mavros" type="mavcmd" name="cmdlong" output="screen" 
+      args="long 511 32 25000 0 0 0 0 0" 
+   />
+</launch>

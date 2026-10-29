@@ -1,0 +1,4 @@
+gazebo/models/baylands/media/*.DAE filter=lfs diff=lfs merge=lfs -text
+gazebo/models/baylands/media/Textures/*.png filter=lfs diff=lfs merge=lfs -text
+gazebo/models/baylands/media/Textures/*.jpg filter=lfs diff=lfs merge=lfs -text
+gazebo/models/holydrone/meshes/*.STL filter=lfs diff=lfs merge=lfs -text

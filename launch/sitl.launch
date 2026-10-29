@@ -1,0 +1,49 @@
+<launch>
+  <!-- Edit this default when PX4 is stored elsewhere, or override px4_dir:=... -->
+  <arg name="px4_dir" default="$(optenv PX4_DIR /home/holy/bvr/third_party/PX4-Autopilot)"/>
+  <arg name="px4_build_dir" default="$(arg px4_dir)/build/px4_sitl_default"/>
+  <arg name="px4_runtime_dir" default="$(arg px4_build_dir)/rootfs_holydrone"/>
+  <arg name="px4_sys_autostart" default="22000"/>
+  <arg name="px4_sim_model" default="gazebo-classic_holydrone"/>
+  <arg name="px4_sim_speed_factor" default="1.0"/>
+  <arg name="world" default="$(find holydrone)/gazebo/worlds/baylands.world"/>
+  <arg name="gui" default="$(optenv GAZEBO_GUI true)"/>
+  <arg name="reset_params" default="false"/>
+  <arg name="gui_delay" default="5.0"/>
+  <arg name="spawn_x" default="0.0"/>
+  <arg name="spawn_y" default="0.0"/>
+  <!-- Baylands takeoff-pad top is z=0.50 m; add 0.055 m airframe clearance. -->
+  <arg name="spawn_z" default="0.555"/>
+
+  <env name="GAZEBO_MODEL_PATH"
+       value="$(find holydrone)/gazebo/models:$(arg px4_dir)/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_PLUGIN_PATH"
+       value="$(arg px4_build_dir)/build_gazebo-classic:/opt/ros/noetic/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:$(optenv GAZEBO_PLUGIN_PATH)"/>
+  <env name="LD_LIBRARY_PATH"
+       value="$(arg px4_build_dir)/build_gazebo-classic:/opt/ros/noetic/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:$(optenv LD_LIBRARY_PATH)"/>
+
+  <!-- Start the server without the GUI so camera rendering and model insertion
+       do not initialize concurrently. -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world)"/>
+    <arg name="gui" value="false"/>
+    <arg name="paused" value="false"/>
+  </include>
+
+  <!-- spawn_model waits for /gazebo/spawn_sdf_model before inserting the SDF. -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_holydrone"
+        args="-sdf -file $(find holydrone)/gazebo/models/holydrone/holydrone.sdf
+              -model holydrone -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"
+        output="screen"/>
+
+  <!-- PX4 is external to the catkin workspace. roslaunch-check is only a
+       discoverable executable placeholder; bash exec replaces it with PX4. -->
+  <node pkg="roslaunch" type="roslaunch-check" name="px4_sitl"
+        launch-prefix="/bin/bash -lc 'mkdir -p &quot;$(arg px4_runtime_dir)&quot;; cd &quot;$(arg px4_runtime_dir)&quot;; if [ &quot;$(arg reset_params)&quot; = &quot;true&quot; ]; then rm -f parameters.bson parameters_backup.bson; fi; exec env PX4_SYS_AUTOSTART=&quot;$(arg px4_sys_autostart)&quot; PX4_SIM_MODEL=&quot;$(arg px4_sim_model)&quot; PX4_SIM_SPEED_FACTOR=&quot;$(arg px4_sim_speed_factor)&quot; PX4_SIMULATOR= &quot;$(arg px4_build_dir)/bin/px4&quot; &quot;$(arg px4_build_dir)/etc&quot;' --"
+        output="screen" required="true"/>
+
+  <!-- Delay only the GUI. The server, model, and PX4 start immediately. -->
+  <node if="$(arg gui)" pkg="gazebo_ros" type="gzclient" name="gazebo_gui"
+        launch-prefix="/bin/bash -lc 'sleep $(arg gui_delay); exec &quot;$@&quot;' --"
+        output="screen"/>
+</launch>

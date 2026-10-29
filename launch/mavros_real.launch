@@ -1,0 +1,10 @@
+<launch>
+  <param name="use_sim_time" value="false"/>
+
+  <include file="$(find mavros)/launch/px4.launch">
+    <arg name="fcu_url" value="$(optenv MAVROS_FCU_URL /dev/ttyTHS0:2000000)"/>
+    <arg name="gcs_url" value=""/>
+    <arg name="tgt_system" value="$(optenv MAVROS_TGT_SYSTEM 2)"/>
+    <arg name="tgt_component" value="1"/>
+  </include>
+</launch>

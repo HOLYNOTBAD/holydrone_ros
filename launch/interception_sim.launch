@@ -1,0 +1,7 @@
+<launch>
+  <param name="use_sim_time" value="true"/>
+
+  <include file="$(find holydrone)/launch/sitl.launch"/>
+  <include file="$(find holydrone)/launch/mavros.launch"/>
+  <include file="$(find holydrone)/launch/tpv_camera.launch"/>
+</launch>
