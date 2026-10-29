@@ -69,6 +69,12 @@ class HolydronePackageTest(unittest.TestCase):
         self.assertNotIn("auto_takeoff", launch)
         self.assertNotIn("HOLYDRONE_PX4_DIR", launch)
 
+    def test_px4_runs_without_interactive_stdin(self):
+        launch = ET.parse(ROOT / "launch/sitl.launch").getroot()
+        node = next(node for node in launch.findall("node")
+                    if node.attrib.get("name") == "px4_sitl")
+        self.assertIn('bin/px4" -d ', node.attrib["launch-prefix"])
+
     def test_sim_mavros_is_owned_by_the_sim_package(self):
         launch = (ROOT / "launch/mavros.launch").read_text()
         self.assertIn("$(find mavros)/launch/px4.launch", launch)

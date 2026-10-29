@@ -37,9 +37,10 @@
         output="screen"/>
 
   <!-- PX4 is external to the catkin workspace. roslaunch-check is only a
-       discoverable executable placeholder; bash exec replaces it with PX4. -->
+       discoverable executable placeholder; bash exec replaces it with PX4.
+       -d disables the interactive shell, which spins on EOF under a supervisor. -->
   <node pkg="roslaunch" type="roslaunch-check" name="px4_sitl"
-        launch-prefix="/bin/bash -lc 'mkdir -p &quot;$(arg px4_runtime_dir)&quot;; cd &quot;$(arg px4_runtime_dir)&quot;; if [ &quot;$(arg reset_params)&quot; = &quot;true&quot; ]; then rm -f parameters.bson parameters_backup.bson; fi; exec env PX4_SYS_AUTOSTART=&quot;$(arg px4_sys_autostart)&quot; PX4_SIM_MODEL=&quot;$(arg px4_sim_model)&quot; PX4_SIM_SPEED_FACTOR=&quot;$(arg px4_sim_speed_factor)&quot; PX4_SIMULATOR= &quot;$(arg px4_build_dir)/bin/px4&quot; &quot;$(arg px4_build_dir)/etc&quot;' --"
+        launch-prefix="/bin/bash -lc 'mkdir -p &quot;$(arg px4_runtime_dir)&quot;; cd &quot;$(arg px4_runtime_dir)&quot;; if [ &quot;$(arg reset_params)&quot; = &quot;true&quot; ]; then rm -f parameters.bson parameters_backup.bson; fi; exec env PX4_SYS_AUTOSTART=&quot;$(arg px4_sys_autostart)&quot; PX4_SIM_MODEL=&quot;$(arg px4_sim_model)&quot; PX4_SIM_SPEED_FACTOR=&quot;$(arg px4_sim_speed_factor)&quot; PX4_SIMULATOR= &quot;$(arg px4_build_dir)/bin/px4&quot; -d &quot;$(arg px4_build_dir)/etc&quot;' --"
         output="screen" required="true"/>
 
   <!-- Delay only the GUI. The server, model, and PX4 start immediately. -->
