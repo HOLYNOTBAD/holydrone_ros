@@ -1,0 +1,16 @@
+# Replace with measurements. Zero mass and motor_order_verified=false intentionally reject fitting.
+mass_kg: 0.0
+center_of_mass_m: [0.0, 0.0, 0.0]
+rotor_positions_m:
+  - [0.10266, 0.11073, 0.0]
+  - [-0.09114, -0.11073, 0.0]
+  - [0.10266, -0.11073, 0.0]
+  - [-0.09114, 0.11073, 0.0]
+# Positions in body FLU from the survey origin. Signs describe torque ON THE BODY.
+yaw_torque_signs: [1, 1, -1, -1]
+esc_indices: [0, 1, 2, 3]
+motor_order_verified: false
+imu_bias_z_m_s2: 0.0
+max_speed_m_s: 0.5
+# Supply measured aggregate diagonal inertia if flight excitation cannot identify it.
+# inertia_diagonal_kg_m2: [0.0, 0.0, 0.0]

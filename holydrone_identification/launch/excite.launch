@@ -1,0 +1,16 @@
+<launch>
+  <arg name="environment" default="sim"/>
+  <arg name="config" default="$(find holydrone_identification)/config/excitation.yaml"/>
+  <arg name="auto_takeoff" default="false"/>
+  <arg name="enable_real_excitation" default="false"/>
+  <node pkg="holydrone" type="configure_mavlink_streams.py" name="configure_identification_feedback" output="screen">
+    <param name="interval_us" value="20000"/>
+    <rosparam param="message_ids">[83]</rosparam>
+  </node>
+  <node pkg="holydrone_identification" type="excite.py" name="identification_exciter" output="screen" required="true">
+    <rosparam command="load" file="$(arg config)"/>
+    <param name="environment" value="$(arg environment)"/>
+    <param name="auto_takeoff" value="$(arg auto_takeoff)"/>
+    <param name="enable_real_excitation" value="$(arg enable_real_excitation)"/>
+  </node>
+</launch>

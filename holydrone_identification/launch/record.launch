@@ -1,0 +1,8 @@
+<launch>
+  <arg name="output"/>
+  <arg name="environment" default="real"/>
+  <node pkg="holydrone_identification" type="record.py" name="identification_recorder" output="screen" required="true">
+    <param name="output" value="$(arg output)"/>
+    <param name="environment" value="$(arg environment)"/>
+  </node>
+</launch>

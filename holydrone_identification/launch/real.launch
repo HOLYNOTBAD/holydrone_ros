@@ -1,0 +1,7 @@
+<launch>
+  <arg name="output"/>
+  <include file="$(find holydrone)/launch/mavros_real.launch"/>
+  <include file="$(find holydrone_identification)/launch/record.launch">
+    <arg name="environment" value="real"/><arg name="output" value="$(arg output)"/>
+  </include>
+</launch>

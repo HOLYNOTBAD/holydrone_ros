@@ -28,6 +28,8 @@ Clone the package into a ROS Noetic workspace and fetch its Git LFS assets:
 cd /path/to/catkin_ws/src
 git clone https://github.com/HOLYNOTBAD/holydrone_ros.git holydrone
 git -C holydrone lfs pull
+# Expose the nested identification package to catkin:
+ln -s holydrone/holydrone_identification holydrone_identification
 
 cd ..
 source /opt/ros/noetic/setup.bash
@@ -235,3 +237,11 @@ The launch file does not check the MAVLink connection or send arm/takeoff
 commands. The vehicle remains on the ground for QGroundControl or MAVROS
 operation. Set `reset_params:=true` only when persisted PX4 SITL parameters
 should be removed. Press `Ctrl-C` to stop PX4 and Gazebo.
+
+## Identification
+
+The separate [holydrone_identification](holydrone_identification/README.md) package provides
+read-only real-flight recording, physical-parameter fitting, bounded Gazebo/optional real-flight
+excitation, and independently validated first-order response export for training.
+Because this repository root is already a catkin package, expose the nested package with a
+separate workspace source symlink as shown above.
