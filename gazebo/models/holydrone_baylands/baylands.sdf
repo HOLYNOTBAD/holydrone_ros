@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
 <sdf version="1.6">
   <model name="baylands">
+    <pose>0 0 -1.3 0 0 0</pose>
     <static>true</static>
 
     <link name="baylands_01">
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_01.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_01.DAE</uri>
           </mesh>
         </geometry>
       </visual>
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_01.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_01.DAE</uri>
           </mesh>
         </geometry>
       </collision>
@@ -24,14 +25,14 @@
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_02.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_02.DAE</uri>
           </mesh>
         </geometry>
       </visual>
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_02.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_02.DAE</uri>
           </mesh>
         </geometry>
       </collision>
@@ -41,14 +42,14 @@
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_03.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_03.DAE</uri>
           </mesh>
         </geometry>
       </visual>
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>file://media/baylands_03.DAE</uri>
+            <uri>model://holydrone_baylands/media/baylands_03.DAE</uri>
           </mesh>
         </geometry>
       </collision>

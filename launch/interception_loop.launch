@@ -1,8 +1,0 @@
-<launch>
-  <param name="use_sim_time" value="true"/>
-
-  <include file="$(find holydrone)/launch/sitl.launch">
-    <arg name="px4_sim_speed_factor" value="4.0"/>
-  </include>
-  <include file="$(find holydrone)/launch/mavros.launch"/>
-</launch>

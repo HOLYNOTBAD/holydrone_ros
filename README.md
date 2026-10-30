@@ -12,7 +12,7 @@ overlay, MAVROS launch entries, camera helpers and visualization nodes.
 | `gazebo/models/{gps,lidar,fpv_cam}` | Sensor submodels required by the airframe SDF |
 | `gazebo/models/tpv_cam` | Optional third-person Gazebo camera |
 | `gazebo/worlds/baylands.world` | Portable Baylands scene with a flat takeoff pad |
-| `gazebo/models/baylands` | Baylands Collada meshes, textures and material assets managed by Git LFS |
+| `gazebo/models/holydrone_baylands` | Baylands Collada meshes, textures and material assets managed by Git LFS |
 | `px4/overlay` | Backed-up PX4 `22000` airframe using the original PX4 source-tree layout |
 | `scripts` | Camera synchronization and visualization helpers |
 
@@ -64,13 +64,10 @@ ISB-NMPC interception profiles likewise remain in the host project's
 `isb_nmpc/config/holydrone` directory because they describe
 controller behavior rather than the aircraft simulation model.
 
-After the complete SITL entry is running, optional marker and
-third-person-camera nodes can be started separately:
+After the complete SITL entry is running, the optional third-person camera
+can be started separately:
 
 ```bash
-roslaunch holydrone visualization.launch \
-  show_camera_frustum:=true \
-  camera_param_file:="$(rospack find camera_driver)/config/camera/camera_params_usb_imx577_30degree.yaml"
 roslaunch holydrone tpv_camera.launch
 ```
 
@@ -201,7 +198,7 @@ second infrastructure entry. It waits for the FCU connection before setting
 the simulated IMU message intervals:
 
 ```bash
-roslaunch holydrone mavros.launch
+roslaunch holydrone mavros_sim.launch
 ```
 
 To use another PX4 tree without editing the file, override the launch argument:
@@ -228,8 +225,9 @@ roslaunch holydrone sitl.launch \
   spawn_z:=0.055
 ```
 
-The Baylands world is self-contained in this ROS package; it does not depend
-on `~/.gazebo/models/baylands` or the host project's `params/gazebo` directory.
+The Baylands world is self-contained in this ROS package. It uses the unique
+`model://holydrone_baylands` URI, so it does not depend on or get shadowed by
+`~/.gazebo/models/baylands` or the host project's `params/gazebo` directory.
 Because its meshes and textures are stored with Git LFS, run `git lfs pull`
 after cloning a repository that contains this package.
 

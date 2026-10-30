@@ -51,16 +51,18 @@
         <plugin name='camera_plugin' filename='libgazebo_ros_camera.so'>
           <robotNamespace>/</robotNamespace>
           <alwaysOn>true</alwaysOn>
-          <imageTopicName>tpv</imageTopicName>
-          <cameraInfoTopicName>tpv/camera_info</cameraInfoTopicName>
+          <!-- Absolute topic names preserve the public /camera/tpv API while
+               cameraName below gives this plugin its own service namespace. -->
+          <imageTopicName>/camera/tpv</imageTopicName>
+          <cameraInfoTopicName>/camera/tpv/camera_info</cameraInfoTopicName>
           <updateRate>10.000000</updateRate>
-          <cameraName>camera</cameraName>
+          <cameraName>tpv_camera</cameraName>
           <frameName>/robot_tpv_camera_link</frameName>
           <CxPrime>320.000000</CxPrime>
           <Cx>320.000000</Cx>
           <Cy>240.000000</Cy>
           <hackBaseline>0</hackBaseline>
-          <focalLength>220.000000</focalLength>
+          <focalLength>219.999520</focalLength>
           <distortionK1>0.0</distortionK1>
           <distortionK2>0.0</distortionK2>
           <distortionK3>0.0</distortionK3>

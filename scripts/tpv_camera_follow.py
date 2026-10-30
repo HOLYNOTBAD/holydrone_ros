@@ -119,4 +119,8 @@ class TpvCameraFollower:
 
 if __name__ == "__main__":
     rospy.init_node("tpv_camera_follow")
-    TpvCameraFollower().spin()
+    try:
+        TpvCameraFollower().spin()
+    except rospy.ROSInterruptException:
+        # rospy.Rate.sleep() raises during an ordinary roslaunch shutdown.
+        pass

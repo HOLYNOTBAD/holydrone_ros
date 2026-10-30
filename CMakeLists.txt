@@ -9,11 +9,9 @@ if(CATKIN_ENABLE_TESTING)
 endif()
 
 catkin_install_python(PROGRAMS
-  scripts/camera_frustum_marker.py
   scripts/configure_mavlink_streams.py
   scripts/sync_gazebo_camera_model.py
   scripts/tpv_camera_follow.py
-  scripts/uav_mesh_marker.py
   scripts/world_map_alignment_tf.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

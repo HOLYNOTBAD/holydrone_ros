@@ -462,7 +462,7 @@
     </plugin>
     <include>
       <uri>model://fpv_cam</uri>
-      <pose>0.134064 0.004560 0.027495 -0.147667 -0.585084 0.076872</pose>
+      <pose>0.095000 0.000000 0.000000 0.000000 -0.523599 0.000000</pose>
     </include>
     <joint name='fpv_cam_joint' type='fixed'>
       <child>fpv_cam::link</child>

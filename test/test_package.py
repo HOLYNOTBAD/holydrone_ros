@@ -39,11 +39,11 @@ class HolydronePackageTest(unittest.TestCase):
             "gazebo/models/holydrone/meshes/Propeller 7inch.STL",
             "gazebo/models/lidar/model.sdf",
             "gazebo/worlds/baylands.world",
-            "gazebo/models/baylands/baylands.sdf",
-            "gazebo/models/baylands/media/baylands_01.DAE",
-            "gazebo/models/baylands/media/baylands_02.DAE",
-            "gazebo/models/baylands/media/baylands_03.DAE",
-            "gazebo/models/baylands/media/Textures/Grass.png",
+            "gazebo/models/holydrone_baylands/baylands.sdf",
+            "gazebo/models/holydrone_baylands/media/baylands_01.DAE",
+            "gazebo/models/holydrone_baylands/media/baylands_02.DAE",
+            "gazebo/models/holydrone_baylands/media/baylands_03.DAE",
+            "gazebo/models/holydrone_baylands/media/Textures/Grass.png",
             "px4/overlay/ROMFS/px4fmu_common/init.d-posix/airframes/22000_gazebo-classic_holydrone",
         ]
         for relative in required:
@@ -76,7 +76,7 @@ class HolydronePackageTest(unittest.TestCase):
         self.assertIn('bin/px4" -d ', node.attrib["launch-prefix"])
 
     def test_sim_mavros_is_owned_by_the_sim_package(self):
-        launch = (ROOT / "launch/mavros.launch").read_text()
+        launch = (ROOT / "launch/mavros_sim.launch").read_text()
         self.assertIn("$(find mavros)/launch/px4.launch", launch)
         self.assertIn("configure_mavlink_streams.py", launch)
         self.assertTrue((ROOT / "scripts/configure_mavlink_streams.py").is_file())

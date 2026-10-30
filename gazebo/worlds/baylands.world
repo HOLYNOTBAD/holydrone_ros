@@ -17,7 +17,9 @@
     </include>
 
     <include>
-      <uri>model://baylands</uri>
+      <!-- The package-unique URI prevents a stale user model at
+           ~/.gazebo/models/baylands from shadowing this bundled model. -->
+      <uri>model://holydrone_baylands</uri>
     </include>
 
     <model name="flat_takeoff_pad">
