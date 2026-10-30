@@ -29,7 +29,8 @@ source devel/setup.bash
 rospack find holydrone_identification
 ```
 
-QUAD_RL's `deployment/_scripts/build_ros.sh` creates this link automatically.
+QUAD_RL tracks this link at `deployment/src/holydrone_identification`, so running
+`catkin_make` directly from `deployment` discovers this package.
 Dependencies: rospy, MAVROS messages, NumPy, SciPy, PyYAML. No JAX dependency.
 
 ## 1. Real flight data collection
