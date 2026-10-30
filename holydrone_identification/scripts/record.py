@@ -21,10 +21,11 @@ class Recorder:
         self.output.mkdir(parents=True,exist_ok=False)
         self.lock=threading.RLock(); self.latest={}; self.commands=collections.deque(maxlen=2000)
         self.previous=-1.; self.rows=0
+        self.event_stream=(self.output/'fsm_events.jsonl').open('x')
         self.fields=['t','cmd_t','cmd_wx','cmd_wy','cmd_wz','cmd_thrust','wx','wy','wz',
                      'fx','fy','fz','px','py','pz','vx','vy','vz','qx','qy','qz','qw',
                      'rpm0','rpm1','rpm2','rpm3','voltage','armed','mode','segment','channel',
-                     'phase','valid','flight_valid','rpm_valid']
+                     'phase','fsm_state','reason','sequence_complete','valid','flight_valid','rpm_valid']
         self.stream=(self.output/'samples.csv').open('x',newline='')
         self.writer=csv.DictWriter(self.stream,fieldnames=self.fields); self.writer.writeheader()
         self.metadata=dict(environment=rospy.get_param('~environment','real'),
@@ -32,7 +33,7 @@ class Recorder:
                            started_wall=time.time(), imu_convention='FLU specific force, stationary level fz=+9.81',
                            rpm_convention='mechanical revolutions/minute; ESC ordering must be verified',
                            parameters=rospy.get_param('~'), samples=0)
-        self.metadata['excitation_parameters']=rospy.get_param('/identification_exciter',{})
+        self.metadata['excitation_parameters']=rospy.get_param('/identification_fsm',{})
         try:
             self.metadata['holydrone_revision']=subprocess.check_output(
                 ['git','-C',str(Path(__file__).resolve().parents[2]),'rev-parse','HEAD'],
@@ -51,7 +52,13 @@ class Recorder:
             self.subscribers.append(rospy.Subscriber(topic,kind,lambda m,k=key:self.cache(k,m),queue_size=100))
         self.subscribers.append(rospy.Subscriber(rospy.get_param('~topics/command','/mavros/setpoint_raw/attitude'),AttitudeTarget,self.command,queue_size=200))
         self.subscribers.append(rospy.Subscriber(rospy.get_param('~topics/imu','/mavros/imu/data'),Imu,self.imu,queue_size=200))
+        self.subscribers.append(rospy.Subscriber('/identification/events',String,self.event,queue_size=100))
         rospy.on_shutdown(self.close)
+
+    def event(self,message):
+        with self.lock:
+            if not self.event_stream.closed:
+                self.event_stream.write(message.data+'\n');self.event_stream.flush()
 
     def save_metadata(self):
         (self.output/'metadata.json').write_text(json.dumps(self.metadata,indent=2,default=str)+'\n')
@@ -92,7 +99,9 @@ class Recorder:
             phase,fresh=self.get('phase',String(data='{}'),.3)
             try:status=json.loads(phase.data) if fresh else {}
             except ValueError:status={}
-            row.update(segment=status.get('segment',-1),channel=status.get('channel','none'),phase=status.get('phase','passive'))
+            row.update(segment=status.get('segment',-1),channel=status.get('channel','none'),phase=status.get('phase','passive'),
+                       fsm_state=status.get('state','UNKNOWN'),reason=status.get('reason',''),
+                       sequence_complete=int(status.get('sequence_complete',False)))
             row['valid']=int(flight_ok and command_ok and state.mode=='OFFBOARD' and
                              row['phase']=='pulse' and all(math.isfinite(row[k]) for k in ('wx','wy','wz','fz')))
             esc,eok=self.get('esc',ESCStatus())
@@ -109,6 +118,7 @@ class Recorder:
     def close(self):
         with self.lock:
             if self.stream.closed:return
+            self.event_stream.close()
             self.stream.close(); self.metadata['samples']=self.rows; self.metadata['ended_wall']=time.time()
             self.save_metadata()
 

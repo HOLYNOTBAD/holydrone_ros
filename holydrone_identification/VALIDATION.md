@@ -30,3 +30,18 @@ This is **local, small-amplitude SITL identification**, not physical calibration
 aircraft and not validation of an RL policy. No physical aircraft or motor bench was operated.
 The real-physics pipeline was checked against synthetic data with known parameters. More pulse
 pairs, voltage/load conditions and coupled-axis validation are needed before broadening the model.
+
+
+## Identification FSM refactor
+
+The explicit `IdentificationFSM` replaces the implicit excite-script state management.
+Regression tests cover final recovery before completion, landing feedback before FINISHED,
+operator takeover, abort latching/control withdrawal, continued hold while awaiting hover
+feedback, illegal transitions, and competing setpoint publishers after completion.
+The legacy `excite.launch` forwards to the new `identification_fsm.launch`.
+
+Gazebo regression: `results/identification_validation/fsm_01/record/fsm_events.jsonl`
+records four EXCITE intervals, final RECOVER → COMPLETE at 30.88 s, LANDING,
+and FINISHED at 41.536 s only after PX4 disarming. No ABORTED transition occurred.
+The recorder's CSV includes `fsm_state`, `reason`, and `sequence_complete`; all four
+completed pulse segments remain readable by the response fitter. 20 unittests pass.

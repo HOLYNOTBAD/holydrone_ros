@@ -136,8 +136,8 @@ roslaunch holydrone_identification sim.launch \
 
 Automatic OFFBOARD entry, arming and takeoff are **simulation only**, opt-in via `auto_takeoff`.
 The simulated vehicle first stabilizes at 2 m. It then executes short positive/negative pulses
-on one channel at a time and returns to position hold between pulses. Completion requests landing
-in automatic simulation mode. Default parameters are in `config/excitation.yaml`; the default `hover_source: feedback` measures median PX4 ATTITUDE_TARGET thrust during stable
+on one channel at a time and returns to position hold between pulses. After the final pulse the vehicle recovers stable hover before declaring completion;
+automatic simulation then requests landing and waits for confirmed disarming. Default parameters are in `config/excitation.yaml`; the default `hover_source: feedback` measures median PX4 ATTITUDE_TARGET thrust during stable
 position hold and freezes that baseline for each pulse. The launch requests message 83 at 50 Hz;
 if it is unavailable, excitation waits and eventually times out. `hover_source: fixed` explicitly
 uses `hover_thrust` for a separately calibrated baseline. Do not treat MPC_THR_HOVER as a measured
@@ -152,7 +152,9 @@ roslaunch holydrone_identification sim.launch \
   config:=/absolute/path/validation_excitation.yaml
 ```
 
-Observe progress with `rostopic echo /identification/status`. Stop only the excitation via:
+Observe the named state with `rostopic echo /identification/state`; detailed status remains
+on `/identification/status`. Transitions and reasons are published on `/identification/events`
+and saved by the recorder to `fsm_events.jsonl`. Stop only the excitation via:
 
 ```bash
 rosservice call /identification/stop '{}'
@@ -173,7 +175,7 @@ altitude/displacement/tilt bounds and session time for the actual aircraft. With
 stable airborne flight and a suitable handover procedure:
 
 ```bash
-roslaunch holydrone_identification excite.launch environment:=real \
+roslaunch holydrone_identification identification_fsm.launch environment:=real \
   enable_real_excitation:=true config:=/data/measured_excitation.yaml
 rosservice call /identification/prepare '{}'
 # Operator selects OFFBOARD after the position stream is established.
@@ -233,3 +235,31 @@ python3 -m unittest discover -s /path/to/holydrone/holydrone_identification/test
 
 Synthetic tests recover known response/physical parameters and reject reused validation logs,
 insufficient excitation and inadequate held-out predictions. Real hardware testing is not implied.
+
+## Explicit identification FSM
+
+`scripts/identification_fsm.py` is the ROS entry; `src/holydrone_identification/fsm.py`
+contains the single implementation and allowed transition table. `excite.py` and `excite.launch`
+remain compatibility entries. `sim.launch` directly includes `identification_fsm.launch`.
+
+```text
+IDLE → HOLD → [TAKEOFF, automatic simulation only] → RECOVER → EXCITE
+                                                     ↑         │
+                                                     └─────────┘
+After the final pulse: RECOVER → COMPLETE
+    simulation automatic: COMPLETE → LANDING → FINISHED (actual disarm feedback)
+    manual/real: COMPLETE holds position → FINISHED on operator takeover/disarm
+Any active failure or stop request: ABORTED (latched until a new prepare request)
+```
+
+Services remain `/identification/prepare`, `/identification/start`, `/identification/stop`.
+An explicit `/identification/land` service requests landing from an active armed OFFBOARD
+experiment, including an aborted experiment with valid feedback. Real flight still never
+requests automatic arming or OFFBOARD entry.
+
+`COMPLETE` means all planned pulses finished **and final hover recovery succeeded**.
+`FINISHED` means the session has ended; it alone does not mean all pulses were collected.
+The `sequence_complete` field distinguishes a completed sequence from an early landing.
+`ABORTED` carries a reason and excludes the interrupted pulse from fitting. A new prepare
+request assigns fresh segment IDs so multiple attempts cannot merge into a single fitted pulse.
+Waiting for FCU hover-thrust feedback continues position streaming and status publication.

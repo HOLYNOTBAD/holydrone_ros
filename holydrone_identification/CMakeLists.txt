@@ -3,7 +3,7 @@ project(holydrone_identification)
 find_package(catkin REQUIRED)
 catkin_python_setup()
 catkin_package()
-catkin_install_python(PROGRAMS scripts/record.py scripts/excite.py scripts/identify.py
+catkin_install_python(PROGRAMS scripts/record.py scripts/excite.py scripts/identification_fsm.py scripts/identify.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(DIRECTORY launch config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 install(FILES README.md VALIDATION.md DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
