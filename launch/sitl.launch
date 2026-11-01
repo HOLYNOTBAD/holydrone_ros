@@ -15,6 +15,8 @@
   <!-- Baylands takeoff-pad top is z=0.50 m; add 0.055 m airframe clearance. -->
   <arg name="spawn_z" default="0.555"/>
 
+  <!-- The Gazebo lockstep plugin must receive the same speed factor as PX4. -->
+  <env name="PX4_SIM_SPEED_FACTOR" value="$(arg px4_sim_speed_factor)"/>
   <env name="GAZEBO_MODEL_PATH"
        value="$(find holydrone)/gazebo/models:$(arg px4_dir)/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models:$(optenv GAZEBO_MODEL_PATH)"/>
   <env name="GAZEBO_PLUGIN_PATH"
