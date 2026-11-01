@@ -28,8 +28,9 @@ Clone the package into a ROS Noetic workspace and fetch its Git LFS assets:
 cd /path/to/catkin_ws/src
 git clone https://github.com/HOLYNOTBAD/holydrone_ros.git holydrone
 git -C holydrone lfs pull
-# Expose the nested identification package to catkin:
-ln -s holydrone/holydrone_identification holydrone_identification
+# Add the independent experiment packages when needed:
+git clone https://github.com/HOLYNOTBAD/holydrone_identification.git holydrone_identification
+git clone https://github.com/HOLYNOTBAD/holydrone_autotune.git holydrone_autotune
 
 cd ..
 source /opt/ros/noetic/setup.bash
@@ -240,8 +241,8 @@ should be removed. Press `Ctrl-C` to stop PX4 and Gazebo.
 
 ## Identification
 
-The separate [holydrone_identification](holydrone_identification/README.md) package provides
-read-only real-flight recording, physical-parameter fitting, bounded Gazebo/optional real-flight
-excitation, and independently validated first-order response export for training.
-Because this repository root is already a catkin package, expose the nested package with a
-separate workspace source symlink as shown above.
+The separate [holydrone_identification](https://github.com/HOLYNOTBAD/holydrone_identification)
+package provides physical-parameter fitting, bounded Gazebo/optional real-flight excitation, and
+independently validated first-order response export for training. Candidate parameter application,
+the excitation FSM, experiment interfaces and offline comparison live in the independent
+[holydrone_autotune](https://github.com/HOLYNOTBAD/holydrone_autotune) package.
