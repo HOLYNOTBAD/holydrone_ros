@@ -5,7 +5,7 @@
   <description>Holydrone aircraft integration for simulation and real flight.</description>
 
   <maintainer email="holynotbad@users.noreply.github.com">HOLYNOTBAD</maintainer>
-  <license>See repository and third-party license notices</license>
+  <license>GPL-3.0-only</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 

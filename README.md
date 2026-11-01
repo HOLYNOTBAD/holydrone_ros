@@ -1,8 +1,43 @@
-# holydrone
+<h1 align="center">Holydrone ROS</h1>
+<p align="center"><strong>ROS 1, PX4 SITL, and Gazebo Integration for the Holydrone Platform</strong></p>
 
-`holydrone` is the ROS 1 aircraft integration package for simulation and real
-flight. It contains the portable Gazebo Classic model, PX4 SITL airframe
-overlay, MAVROS launch entries, camera helpers and visualization nodes.
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.34789"><img src="https://img.shields.io/badge/arXiv-2610.34789-b31b1b" alt="arXiv preprint"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-blue" alt="GPL v3 license"></a>
+  <img src="https://img.shields.io/badge/ROS-Noetic-22314E" alt="ROS Noetic">
+  <img src="https://img.shields.io/badge/PX4-v1.16.2-48B9C7" alt="PX4 v1.16.2">
+  <img src="https://img.shields.io/badge/Gazebo-Classic_11-f58113" alt="Gazebo Classic 11">
+</p>
+
+<p align="center">
+  <a href="#package-contents">Contents</a> ·
+  <a href="#add-to-a-catkin-workspace">Installation</a> ·
+  <a href="#utilities">Utilities</a> ·
+  <a href="#px4-deployment-and-launch">PX4 and Gazebo</a> ·
+  <a href="#citation">Citation</a>
+</p>
+
+**Holydrone ROS** is the ROS 1 aircraft-integration package for simulation and
+real flight. It provides a portable Gazebo Classic model, the Baylands scene,
+a PX4 SITL airframe overlay, MAVROS launch files, camera-model synchronization,
+and visualization utilities for the [Holydrone](https://github.com/HOLYNOTBAD/holydrone)
+platform.
+
+## Project ecosystem
+
+| Resource | Description |
+| :--- | :--- |
+| [Paper · ISB-NMPC](https://arxiv.org/abs/2610.34789) | Interception-oriented spherical-bearing NMPC and delay-compensated visual estimation |
+| [Algorithm · ISB-NMPC](https://github.com/HOLYNOTBAD/ISB-NMPC) | Perception, estimation, control, and experiment workflows built on this package |
+| [Hardware · Holydrone](https://github.com/HOLYNOTBAD/holydrone) | CAD assemblies, printable parts, firmware, parameters, and hardware demonstrations |
+
+> [!NOTE]
+> We hope this project supports further research and development toward a
+> peaceful and safe low-altitude environment. Feedback and contributions are
+> welcome; contact [hongli@buaa.edu.cn](mailto:hongli@buaa.edu.cn).
+>
+> If this repository contributes to your work, please cite
+> [our paper](#citation) and consider starring the related repositories.
 
 ## Package contents
 
@@ -246,3 +281,24 @@ package provides physical-parameter fitting, bounded Gazebo/optional real-flight
 independently validated first-order response export for training. Candidate parameter application,
 the excitation FSM, experiment interfaces and offline comparison live in the independent
 [holydrone_autotune](https://github.com/HOLYNOTBAD/holydrone_autotune) package.
+
+## License
+
+This repository is released under the [GNU General Public License v3.0](LICENSE).
+Bundled third-party components and assets remain subject to the terms documented
+in [THIRD_PARTY.md](THIRD_PARTY.md) and their accompanying license files.
+
+## Citation
+
+If you use this integration package in academic work, please cite:
+
+```bibtex
+@article{hong2026isbnmpc,
+  title={ISB-NMPC: Interception-Oriented Spherical-Bearing Nonlinear Model Predictive Control for Quadrotors},
+  author={Hong, Li and Liu, Linkai and Ren, Xiangyu and Lv, Shuli and Min, Chen and Wu, Chunjiang and Zhang, Yujun and Zeng, Dingchen and Quan, Quan},
+  journal={arXiv preprint arXiv:2610.34789},
+  year={2026},
+  doi={10.48550/arXiv.2610.34789},
+  url={https://arxiv.org/abs/2610.34789}
+}
+```
