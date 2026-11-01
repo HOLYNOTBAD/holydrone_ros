@@ -25,6 +25,7 @@ DISTORTION_PATTERN = re.compile(
 POSITION_BODY_PATTERN = re.compile(
     r"^\s*position_body_m\s*:\s*\[([^]]*)\]\s*(?:#.*)?$"
 )
+P_B_C_PATTERN = re.compile(r"^\s*p_B_C\s*:\s*\[([^]]*)\]\s*(?:#.*)?$")
 FPS_PATTERN = re.compile(
     r"^\s*(?:fps|framerate)\s*:\s*([-+]?\d+(?:\.\d+)?)\s*(?:#.*)?$"
 )
@@ -62,6 +63,7 @@ def parse_camera_config(config_path: str) -> CameraConfig:
     cy = None
     distortion = None
     position_body_m = None
+    p_b_c = None
     fps = None
     aircraft_sdf = None
     fpv_cam_sdf = None
@@ -124,6 +126,12 @@ def parse_camera_config(config_path: str) -> CameraConfig:
                     values.append(0.0)
                 distortion = tuple(values)
                 continue
+            m_p_b_c = P_B_C_PATTERN.match(line)
+            if m_p_b_c:
+                p_b_c = tuple(float(value.strip()) for value in m_p_b_c.group(1).split(","))
+                if len(p_b_c) != 3:
+                    raise RuntimeError(f"p_B_C must contain 3 values in {config_path}")
+                continue
             m_position = POSITION_BODY_PATTERN.match(line)
             if m_position:
                 values = [
@@ -168,7 +176,7 @@ def parse_camera_config(config_path: str) -> CameraConfig:
     )
     return CameraConfig(
         r_cam_body=r_cam_body,
-        position_body_m=position_body_m,
+        position_body_m=position_body_m if position_body_m is not None else p_b_c,
         img_width=img_width,
         img_height=img_height,
         fx=effective_fx,
